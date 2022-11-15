@@ -19,7 +19,7 @@ void setup(void) {
   
 }
 
-// array carrying device addresses. It should be size 8*N_devices
+// array carrying device addresses. It should be size 8*N_dev
 byte ROMarray[40];
 byte present = 0;
 
