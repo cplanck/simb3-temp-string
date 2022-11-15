@@ -1,12 +1,15 @@
-// This code performs a discovery routine for N DS28AE00 chips chained together
-// it performs the discovery loop, records all the addresses in order, and then loop over the addresses to collect the temperatures
-// IT WORKS! IT ACTUALLY WORKS! LET'S SPIN SOME REAL BOARDS!
-// written 14 July 2022 by Cameron Planck
+// DS28AE00 Breadboard Code.
+// This code is for reading DS29AE00 temperature chips in chain-mode. 
+// It performs the discovery loop, records all the addresses in order, and then loop over the addresses to collect and print the temperatures.
+// Written 14 July 2022 by Cameron Planck
+// Last updated: 11/15/2022
+
+// NOTE: this is the code used for the initial validation of the SIMB3 One-Wire Digital Temperature String. It formed the basis for the ow-tempstring-benchtop code used for validating the temperature string boards.
 
 #include <OneWire.h>
 #include <DallasTemperature.h>
 
-OneWire  ds(12);  // on pin 12 (a 4.7K resistor is necessary)
+OneWire  ds(12);  // on pin 12 (a 4.7K resistor is necessary, it wont work without it)
 
 // Pass our oneWire reference to Dallas Temperature sensor 
 DallasTemperature sensors(&ds);
