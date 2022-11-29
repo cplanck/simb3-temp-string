@@ -23,7 +23,7 @@ void setup() {
 void loop() {
   
   while (Serial.available() == 0) {}        //wait for data available
-  String readString = Serial.readString();  //read until timeout
+  String readString = Serial.readString();  
   readString.trim();                        // remove any \r \n whitespace at the end of the String
 
   if (readString == "On")
