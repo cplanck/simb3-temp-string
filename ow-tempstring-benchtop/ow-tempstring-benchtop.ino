@@ -86,12 +86,13 @@ void loop(void){
   Serial.println(sensors.getDeviceCount()); 
 
   present = ds.reset();
-  Serial.print("Present?: ");
-  Serial.println(present);
+//  Serial.print("Present?: ");
+//  Serial.println(present);
 
   // turn on chain mode
-  Serial.print("Turning on chain mode. Result: ");
-  Serial.println(sensors.chainOn(), HEX);
+//  Serial.print("Turning on chain mode. Result: ");
+//  Serial.println(sensors.chainOn(), HEX);
+  sensors.chainOn();
 
   // loop over chips, applying Conditional ROM command and writing response to ROMarray
   for(int i=0; i<80; i++){
@@ -100,6 +101,7 @@ void loop(void){
 
   // fetch temperatures from each thermistor by indexing ROMarray
   sensors.requestTemperatures();
+  Serial.println("START READ");
   for(int i = 0; i<80; i++){
     DeviceAddress thermistor = {ROMarray[i*8], ROMarray[i*8 +1], ROMarray[i*8 +2], ROMarray[i*8 +3], ROMarray[i*8 +4], ROMarray[i*8 +5], ROMarray[i*8 +6], ROMarray[i*8 +7]};
 //    sensors.requestTemperaturesByAddress(thermistor);
@@ -107,7 +109,8 @@ void loop(void){
     Serial.print(i+1);
     Serial.print(" READING: ");
     Serial.println(sensors.getTempC(thermistor));
-
   }
+   Serial.println("END READ");
+
   
 }
