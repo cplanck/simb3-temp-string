@@ -39,7 +39,7 @@ void loop() {
   String readString = Serial.readString();  
   readString.trim();                        // remove any \r \n whitespace at the end of the String
 
-  if (readString == "T1")
+  if (readString == "READ-TT")
   {
     command = 1;
     Serial.println("");
@@ -62,7 +62,7 @@ void loop() {
     decodeTemps(160);
   }
 
-  if (readString == "AIR TEMP")
+  if (readString == "READ-AT")
   {
     command = 3;
     Serial.println("");

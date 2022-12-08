@@ -33,6 +33,8 @@ void setup(){
 
   // runs when master asks for data
   Wire.onRequest(requestEvent);
+
+  // start one-wire devices
   sensors.begin();
   air_temp.begin();
 
@@ -42,13 +44,13 @@ void setup(){
 int state = 0;
 
 // number of DS28EO00s to be read
-int chipNum = 80;
+# define chipNum 80
 
 // define ROM array, which needs to be at minimum 8*(number of DS28EA00s)
-byte ROMarray[640];
+byte ROMarray[8*chipNum];
 
 // define tempArray which needs to be at least 2*(number of DS28EA00s)
-byte tempArray[160];
+byte tempArray[2*chipNum];
 
 byte present = 0;
 
@@ -56,12 +58,21 @@ byte present = 0;
 // -------------------------- Functions called on communication with master ------------------------
 // called when master sends data, e.g., asking for readings from upper temperature string
 void receiveEvent(int numBytes){
-
+//  Serial.println("MASTER ASKING FOR DATA");
   // set state directly from masters request
-  state = Wire.read();
+  while(Wire.available()){
+//    Serial.print("WIRE READ IS IS:  ");
+    state = Wire.read();
+//    Serial.println(state);
+  }
+  
+  delay(3000);
+//  Serial.print("STATE VARIABLE IS:  ");
+//  Serial.println(state);
 
   // read top temperature string
   if (state == 1){
+//    Serial.println("CALLING READ TOP STRING FUNCTION");
      readTopString();     
   }
 
@@ -81,7 +92,9 @@ void requestEvent(){
 
   // read top temperature string
   if (state == 1){
-     Wire.write(tempArray, 160);    
+//     Serial.println("YOU MADE IT IN HERE!");
+     Wire.write(tempArray, 160);  
+     state = 0; // reset state
   }
 
   // read bottom temperature string
@@ -96,11 +109,6 @@ void requestEvent(){
   // ... process other commands
 }
 // ---------------------------------------------------------------------------------------------
-
-
-void loop(){
-     
-}
 
 
 void readTopString(){
@@ -127,7 +135,7 @@ void readTopString(){
     };
 
     // loop over ROMarray, select each chip, ask for temperature, and write to tempArray
-    Serial.println("------------------ CHIP SELECTION BEGIN -------------------");
+    Serial.println("------------------ GET TEMPERATURE BITS -------------------");
     for(int i = 0; i < chipNum; i++){
       ds.reset();
       chipSelect(i);
@@ -253,4 +261,5 @@ void chipSelect(int k){
       }
   }
 
-  
+
+  void loop(){}
