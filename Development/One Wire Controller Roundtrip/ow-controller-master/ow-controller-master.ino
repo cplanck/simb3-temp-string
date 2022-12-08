@@ -18,7 +18,7 @@ String readString;
 byte command[2];   
 byte tempStringBuffer[160];
 byte airTempBuffer[2];
-byte packedTempValues[NUMDS28EA00s*2*3/4];
+byte packedTempValues[NUMDS28EA00s*2*3/4]; 
 
 // ------------ SBD message -----------
 typedef union {
