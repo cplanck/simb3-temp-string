@@ -28,9 +28,10 @@ def convertNegativeTemps(binary):
 
 	binary = int(binary) - 1
 	binary_str = str(bin(binary))
+	binary_str = binary_str[2:].zfill(16)
 
 	binary_str_inv = ''
-	for item in binary_str[2:]:
+	for item in binary_str:
 		
 		if item == '1':
 			binary_str_inv = binary_str_inv + '0'
@@ -107,7 +108,7 @@ def unpackBinary(temp_bytes, num_sensors):
 
 
 # path to the satellite file to download
-sbd_path = '300434064562590_000328.sbd'
+sbd_path = 'test-data/300434064562590_000335.sbd'
 
 binaryReader = BinaryReader(sbd_path)
 

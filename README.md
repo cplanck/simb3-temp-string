@@ -21,20 +21,28 @@ File structure and explanations are below:
 ---transmit-DS28EA00s
 |   Development code for sending the packaged DS28EA00 binary across Iridium. Used to develope and validate and packing/unpacking routine for the 12-bit temperature values from the chain.
 |   Includes a bare-bones transmit Iridium transmit routine.
----I2C Basic++
+
+---binarypacking.ino
+|   Development code to implement the packing algorithm necessary for sending the temperature string values over Iridium
+|
+---decode-temperature.ino
+|   Code for developing the binary (MSB and LSB) to degrees C conversion
+|
+---Fetch Data Over I2C
 |       |
-|       ---basic-i2c-master_pp.ino
-|       |   Development code for testing communication between the SIMB3 mainboard and the "slave" one-wire control board over I2C. The mainboard code iteratively requests data from the one-wire slave
-|       |   (Feather M0) which is connected to the various one-wire devices, including the one-wire temperature string and the air temperature sensor. The master issues an I2C command and the slave    |   responds with the data. The code also "packages" the data to 8-byte chunks for transmission over Iridium.
+|       ---fetch-data-master.ino
+|       |   Development code for testing communication between the SIMB3 mainboard and the "slave" one-wire control board over I2C. The mainboard code iteratively requests data in 32 byte chunks from
+|       |   the one-wire slave (Feather M0) which is connected to the various one-wire devices, including the one-wire temperature string and the air temperature sensor. The master issues an I2C command
+|       |   and the slave responds with the data. The code also "packaged" the data to 8-byte chunks for transmission over Iridium.
 |       |
-|       ---basic-i2c-slave_pp.ino
+|       ---fetch-data-slave.ino
 |       |   Development for the "slave" Feather M0 one-wire controller. Listens to requests from master and responds with data which it requests from the several one-wire devices connected to it. 
 |
 ---One-Wire Controller Roundtrip
 |       |
 |       ---ow-controller-master.ino
-|       |   Development code for sending one-wire temperature string data over Iridium. Master code issues I2C command to slave for data from ow-temp string and air temperature sensors, packs it up, 
-        |   and transmits it.
+|       |   Development code for communicating with the One-Wire Controller and sending the recieved data over Iridium. It is essentially the same code as fetch-data-master.ino but with a send Iridium 
+|       |   routine as well.
 |       |
 |       ---ow-controller-slave.ino
-|       |   Effectively the same code as basic-i2c-slave_pp.ino, but enhanced to prepare it to be depployment ready.
+|       |   Effectively the same code as fetch-data-slave.ino.
