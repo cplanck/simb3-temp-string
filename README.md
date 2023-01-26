@@ -1,48 +1,41 @@
-This is the main repository for the SIMB3 One-Wire Digital Temperature String
+# SIMB3 One-Wire Temperature String Repository
+Written 26 January, 2023 by Cameron Planck
 
-Code in this repository includes development, testing, and production deployment code
+---
 
-File structure and explanations are below: 
+This is the main repository for the SIMB3 One-Wire Digital Temperature String. The temperature string consists of custom made printed circuit boards that contain Maxim Integrated DS28EA00 temperature sensors positioned at 2cm spacing. This repo contains production-grade sketches for using the temperature string with the SIMB3 V4 brain as well as sketches for testing and sketches used in development. The corresponding mainboard sketch (in the SIMB3-embedded-code repo) is SIMB3_BRAIN_V4.ino.
 
--Development
-|
----read-one-DS18B20.ino:
-|   A simple sketch used to read binary data from a standard DS18B20 temperature sensor connected to a Feather M0 board. It was used in development to read SIMB3 air temperature sensor.
-|
----read-one-DS28EA00.ino:
-|   Reads temperature off a single DS28EA00 connected to a Feather M0. Used in development to debug DS28EA00 communication without exclusive reliance on the Dallas Temperature library.
-|
----read-multiple-DS28EA00.ino:
-|    Same basic routine as read-oneDS28EA00, but it performs a ROM discovery routine to find all chips on the bus. It then loops through each chip and records the temperature. 
-|
----basic-transmit.ino:
-|   Bare-bones routine for testing Iridium transmission using SIMB3 hardware. Doesn't require any peripheral devices, just writes and transmits a hardcoded test value.
-|
----transmit-DS28EA00s
-|   Development code for sending the packaged DS28EA00 binary across Iridium. Used to develope and validate and packing/unpacking routine for the 12-bit temperature values from the chain.
-|   Includes a bare-bones transmit Iridium transmit routine.
+The imports files and folders are listed below:
 
----binarypacking.ino
-|   Development code to implement the packing algorithm necessary for sending the temperature string values over Iridium
+```
+├── Production
+│   ├── one-wire-controller-production.ino
+│   ├── SIMB3_Onewire_Controller
+│   │   ├── SIMB3_Onewire_Controller.cpp
+│   │   ├── SIMB3_Onewire_Controller.h
 |
----decode-temperature.ino
-|   Code for developing the binary (MSB and LSB) to degrees C conversion
+├── Testing
+│   ├── pcb-benchtop-test.ino
+│   ├── test-brain-v4-with-tempstrings.ino
 |
----Fetch Data Over I2C
-|       |
-|       ---fetch-data-master.ino
-|       |   Development code for testing communication between the SIMB3 mainboard and the "slave" one-wire control board over I2C. The mainboard code iteratively requests data in 32 byte chunks from
-|       |   the one-wire slave (Feather M0) which is connected to the various one-wire devices, including the one-wire temperature string and the air temperature sensor. The master issues an I2C command
-|       |   and the slave responds with the data. The code also "packaged" the data to 8-byte chunks for transmission over Iridium.
-|       |
-|       ---fetch-data-slave.ino
-|       |   Development for the "slave" Feather M0 one-wire controller. Listens to requests from master and responds with data which it requests from the several one-wire devices connected to it. 
-|
----One-Wire Controller Roundtrip
-|       |
-|       ---ow-controller-master.ino
-|       |   Development code for communicating with the One-Wire Controller and sending the recieved data over Iridium. It is essentially the same code as fetch-data-master.ino but with a send Iridium 
-|       |   routine as well.
-|       |
-|       ---ow-controller-slave.ino
-|       |   Effectively the same code as fetch-data-slave.ino.
+├── Development
+│   ├── Arduino
+│   │   ├── many...
+│   ├── Excel
+│   │   ├── BitPacking.xlsx
+│   ├── Python
+│   │   ├── UnpackTempStringBinaryFullMessage.py
+
+```
+
+The /Production directory contains only grade-A production code. `one-wire-controller-production.ino` is the production sketch for the one-wire controller. The SIMB3_Onewire_Controller directory is the library for the one-wire temperature string. Note: these files are just here for version control. When developing, you must modify the files of the same name under in the Arduino library root directory. After development is finished they should be copied back into this repo. 
+
+The /Testing directory has two sketchs.
+- `pcb-benchtop-test.ino`: for testing single or multiple soldered SIMB3 one-wire PCBs. This code is intended for use during temp-string manufacturing.
+- `test-brain-v4-with-tempstrings.ino`: for testing communication between the SIMB3 V4 brain and the one-wire controller. Simply loops through communication without reading other sensors or transmitting. 
+
+The /Development/Arduino directory contains many sketches that were used in the development of the SIMB3 one-wire temperature string. Caution should be used when taking any code from these sketches, as they may contain old/outdated code that looks correct but is in fact wrong. If debugging or testing features not covered by sketches in the /Testing directory, it's recommended to create new sketches using only code from production grade sketches or the SIMB3 one-wire temperature string library. 
+
+The /Development/Excel directory contains one file, BitPacking.xlsx, which is the map for the bit shifting algorithm used to pack the 12-bit temperature string values to 8-bit byte boundaries for transmission over Iridium. Consult this to understand the embedded packing algorithm or the server-side unpacking algorithm. 
+
+The Development/Python directory contains test files for unpacking and decoding the binary files from Iridium.

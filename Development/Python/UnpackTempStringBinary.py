@@ -7,7 +7,10 @@
 
 # Written 8 December 2022 by Cameron Planck
 
+import collections
+
 from binaryreader import *
+
 
 def applyBitmap(binary_list):
 
@@ -108,14 +111,29 @@ def unpackBinary(temp_bytes, num_sensors):
 
 
 # path to the satellite file to download
-sbd_path = 'test-data/300434064562590_000335.sbd'
+sbd_path = 'test-data/300434064562590_000347.sbd'
 
 binaryReader = BinaryReader(sbd_path)
 
-# read bytes in as unsigned integers
-temp_bytes = []
-for byte in range(0,120):
-	temp_bytes.append(binaryReader.read('uint8'))
+data = collections.OrderedDict()   
+data['air_temp'] = binaryReader.read('uint16')*0.0625
 
-temperatures = unpackBinary(temp_bytes, 80)
-print(temperatures)
+# read bytes in as unsigned integers
+top_temp_bytes = []
+for byte in range(0,120):
+	top_temp_bytes.append(binaryReader.read('uint8'))
+
+bottom_temp_bytes = []
+for byte in range(0,120):
+	bottom_temp_bytes.append(binaryReader.read('uint8'))
+
+top_temperatures = unpackBinary(top_temp_bytes, 80)
+print('TOP TEMPERATURE STRING')
+print(top_temperatures)
+
+bottom_temperatures = unpackBinary(bottom_temp_bytes, 80)
+print('BOTTOM TEMPERATURE STRING')
+print(list(reversed(bottom_temperatures)))
+
+print('AIR TEMPERATURE')
+print(data['air_temp'])
